@@ -9,6 +9,8 @@ from astropy.io import ascii
 from astroML import crossmatch as cx
 import pandas as pd
 
+sep.set_extract_pixstack(900000)
+
 data_path = os.path.abspath('/home/bos0109/sersic/work/rhino/data/extract_test/stellar/CSTAR/')
 images_path = os.path.join(data_path, 'images')
 master_Ryan = os.path.join(images_path, 'master10_wcs.fits')
@@ -31,10 +33,10 @@ def go_test(cat, image_data, thresh):
     S = np.array([cat['x'], cat['y']]).T
     O = np.array([sources['x'], sources['y']]).T
       #right
-    distr, indr = cx.crossmatch(S, O, max_distance=1.8)
+    distr, indr = cx.crossmatch(S, O, max_distance=0.3)
     matchsr = ~np.isinf(distr)
       #left 
-    distl, indl = cx.crossmatch(O, S, max_distance=1.8)
+    distl, indl = cx.crossmatch(O, S, max_distance=0.3)
     matchsl = ~np.isinf(distl)
     ##
     objID = np.zeros_like(O[:,0]) -1
@@ -58,8 +60,8 @@ def go_test(cat, image_data, thresh):
     print 'Number of hits ==> {}'.format(n_hits)
     # report the false detections
     n_false= sum(objID < 0.)
-    print 'N umber of falses ==> {}'.format(n_false)
-    return [thresh, n_hits, n_false]
+    print 'Number of falses ==> {}'.format(n_false)
+    return (thresh, n_hits, n_false)
 
 if __name__ == '__main__':
     import sys
