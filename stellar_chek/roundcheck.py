@@ -41,6 +41,7 @@ def go_test(cat, image_data, thresh):
     ##
     objID = np.zeros_like(O[:,0]) -1
     CSTARID = np.zeros_like(O[:,0]) -1
+    CSTARMAG = np.zeros_like(O[:,0]) -1
     for i in range(len(O)):
         if distl[i] != np.inf: 
             dist_o = distl[i]
@@ -53,15 +54,19 @@ def go_test(cat, image_data, thresh):
                 if ind_s == i:
                     objID[i] = ind_o  
                     CSTARID[i] = cat['cstarid'][ind_o]
+                    CSTARMAG[i] = cat['imag'][ind_o]
     sources['objID'] = objID
     sources['cstarid'] = CSTARID
+    sources['threshold'] = np.repeat(thresh, len(sources))
+    sources['cstarmag'] = CSTARMAG
+    #sources['was_a_hit'] = objID > 0.
     # report the hits as detections
     n_hits = sum(objID > 0.)
     print 'Number of hits ==> {}'.format(n_hits)
     # report the false detections
     n_false= sum(objID < 0.)
     print 'Number of falses ==> {}'.format(n_false)
-    return (thresh, n_hits, n_false)
+    return sources
 
 if __name__ == '__main__':
     import sys
